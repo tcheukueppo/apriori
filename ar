@@ -1,0 +1,31 @@
+#!/bin/bash 
+
+files=(
+		[0]="Hashelement.java" 
+		[1]="FAgenerate.java" 
+		[2]="Itemset.java" 
+		[3]="Main.java" 
+		[4]="FilterDataset.java"
+		[5]="Transaction.java" )
+
+{ test \( $# -eq 2 -o $# -eq 1 \)  && eval workdir='$'{2:-${PWD}}; } ||  \
+		{ echo "$(basename $0) error : invalid number of arguments" && exit 1; }
+
+for i in "${files[@]}";do 
+	if [ ! -f "${workdir:-${PWD}}/$i" ]; then
+		echo "$(basename $0) error : ${i} not found, please move to the" \\
+		"project dir or precise the path to the sources."
+		exit 1
+	fi
+done
+# sanity check + working
+[ -f "${workdir}/class/sdataset" ] && rm -f "${workdir}/class/sdataset"
+[ ! -d "${workdir}/class" ] && mkdir "${workdir}/class" 
+all="${files[@]}"
+arg="${1:-${2}}" && arg=${arg:-dataset}
+[ -f "${workdir}/${arg}" ] && cp --remove-destination ${workdir}/${arg} "${workdir}/class" 
+cd "${workdir}/class"
+eval javac -d "${workdir}/class" "${workdir}/{${all// /,}}" \
+			&& java Main $arg
+
+
