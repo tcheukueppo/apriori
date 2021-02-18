@@ -1,6 +1,0 @@
-move to the directory containing the source then do the following
-
-simply run
-	$ ./ar nameofthedataset
-or 
-	$ ./ar /path/to/the/source/code nameofthedataset

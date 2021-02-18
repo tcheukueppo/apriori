@@ -65,6 +65,7 @@ public class FAgenerate {
 			}
 			// setting the real value of the minsup for further test
 			this.fssl = ((((float)linenumber) * ((float)this.ssl))/100);
+			System.out.println("Absolute Minsup is " + this.fssl + "\n");
 			// filtering the non-sense before adding to hashmap
 			// mark has as function of enabling and disabling insertion
 			freqone = this.filterandprint(freqone.firtemset, -1);
@@ -143,17 +144,18 @@ public class FAgenerate {
 				
 			if(((float)gothrough.supp) >= this.fssl) {
 				if(todo) {
-					System.out.println("Frequent Itemsets of length " + (hashindex + 2) + "\n" + "{ ");
+					System.out.println("Frequent Itemsets of length " + (hashindex + 2) + "\n" + "{\n");
 					todo = false;
 				}
 				realreturn.add(gothrough.itemlist, gothrough.supp);
+				System.out.println("Support = " + gothrough.supp);
 				for(String s : gothrough.itemlist)
 					System.out.print(" °° " + s + " °° ");
-				System.out.println();
+				System.out.println("\n");
 			}
 			gothrough = gothrough.friend;
 			if(todo == false && gothrough == null)
-				System.out.println("} ");
+				System.out.println("\n} ");
 		}
 		return realreturn;
 	}
