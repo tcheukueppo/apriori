@@ -71,12 +71,12 @@ move to ```${HOME}/.local/bin``` in order to run it.
 
 ### Run
 ```shell
-ar [PATH/TO/THE/DATASET]
+asrules [PATH/TO/THE/DATASET]
 ```
 
 ### Help
 ```shell
-ar --help
+asrules --help
 ```
 
 

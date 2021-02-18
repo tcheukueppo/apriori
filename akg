@@ -6,86 +6,103 @@ pfiles=(	"FAgenerate.java"
 			"Hashelement.java" 
 			"Itemset.java" 
 			"Apriori_and_AssociationRules.java"
-			"ar"
+			"asrules"
 	   )
 
-__USAGE  () {
+__usage  () {
 
-	echo "Usage: ar [OPTION]... [DATASET]..."
-	echo -e "  ar generates frequent itemsets and association rules from a given data set\n"
+	echo "Usage: asrules [OPTION]... [DATASET]..."
+	echo -e "  asrules generates frequent itemsets and association rules from a given data set\n"
 	echo -e "  -i, --install		use to build and install the program, now accessible on \$HOME/.local/bin"
 	echo "  -u, --uninstall	use this option to perform an uninstallation"
 	echo "  -r, --reinstall	use this option to perform a reinstallation"
 	echo -e "  -h, --help		to display this help message.\n"
 }
-__SANITY_CHECK () {
 
-	for i in "${pfiles[@]}"; do
-		if [ ! -f "./${i}" ]; then
-			echo "Building error : file '${i}' is missing"
-			return 1
+__sanity_check () {
+
+	toknow=false
+	for file in "${pfiles[@]}"; do
+		if [[ $file =~ .*\.java ]]; then
+			if [ ! -f "./source/$file" ]; then
+				echo "build error : $file not found"
+				toknow=true
+			fi
+		else
+			if [ ! -f "./scripts/$file" ]; then
+				echo "build error : $file not found"
+				toknow=true
+			fi
 		fi
 	done
+	echo -n "dependency resolution ..."
+	if ! which java &>/dev/null; then
+		echo "build error : java not installed, please install java."
+		toknow=true
+	else 
+		echo "ok" 
+	fi
+	[ $toknow == "true" ] && echo "installation error" &&  return 1
 	return 0
 }
-__BUILD () {
 
-	echo "Preparing to build ..."
-	__SANITY_CHECK || exit 1
+__build () {
+
+	echo "preparing to build ..."
+	__sanity_check || exit 1
 	# building java classes
-	# sanity check
-	echo "Bependency resolution ..."
-	if ! which java &>/dev/null; then
-		echo "Building error : java not installed, please install java."
-		exit 1
-	fi
 	[ ! -d ./class ] && mkdir ./class || rm -rf ./class/*
-	chmod 766 "${pfile[@]}"
-	echo -e "Generating classes ..."
-	javac *.java -d ./class && echo "ok" &&  __INSTALL 
+	chmod 766 ./source/*.java
+	echo -n "generating classes ..."
+	javac ./source/*.java -d ./class && echo "ok" &&  __install
 }
-__INSTALL () {
 
-	echo "Preparing to install ..."
+__install () {
+
+	echo "preparing to install ..."
+
+	# sanity check 
 	local localbin="${HOME}/.local/"
 	{ [ ! -d $localbin ] && mkdir ${localbin} "${localbin}bin"; } || localbin="${localbin}bin"
 	[ ! -d $localbin ] && mkdir $localbin
 	localbin="${localbin}/apriori_java_classes"
 	[ ! -d $localbin ] && mkdir $localbin || rm -rf $localbin/*
-	echo "Copying classes to $localbin ..."
-	cp -v ./class/* $localbin && echo "ok\ncopying ar to $localbin"
-	cp -v ar ${localbin%/*} && echo "ok"
+
+	echo "copying classes to $localbin ..."
+	cp -v ./class/* $localbin && echo "copying asrules to $localbin ..."
+	cp -v ./scripts/asrules ${localbin%/*}
+
 	# appending ${HOME}/.local/bin to $PATH if not found
 	if ! { echo "$PATH" | grep -Eq ":?${HOME}/\.local/bin/?:?"; } then
 		echo "Please add '${HOME}/.local/bin' to your path variable or run the program in ${HOME}/.local/bin"
 	fi
 	echo "Installation finished."
 }
-__UNINSTALL () {
+__uninstall () {
 
 	local localbin="${HOME}/.local/bin"
 	echo "Preparing to uninstall ..."
-	[ -f $localbin/ar ] && echo "removing $localbin/ar ..." && rm -f $localbin/ar
-	[ -d $localbin/apriori_java_classes ] && echo "removing $localbin/apriori_java_classes ..." && rm -rf $localbin/apriori_java_classes
+	[ -f $localbin/asrules ] && echo -n "removing $localbin/scripts/asrules ..." && rm -f $localbin/asrules && echo "ok"
+	[ -d $localbin/apriori_java_classes ] && echo -n "removing $localbin/apriori_java_classes ..." && rm -rf $localbin/apriori_java_classes && echo "ok"
 }
 
-__REINSTALL () {
+__reinstall () {
 
 	echo "Preparing to reinstall ..."
 	__build
 }
-__RUN () {
+__run () {
 
 	OPTION=${1}
 	case $OPTION in
 	
-		-h|--help) __USAGE ;;
-		-i|--install) __BUILD ;;
-		-u|--uninstall) __UNINSTALL ;;
-		-r|--reinstall) __REINSTALL ;;
-		*) __USAGE >2 ;;
+		-h|--help) __usage ;;
+		-i|--install) __build ;;
+		-u|--uninstall) __uninstall ;;
+		-r|--reinstall) __reinstall ;;
+		*) __usage >2 ;;
 	esac
 
 }
-[ ${#} != "1" ] && __USAGE && exit 1
-__RUN ${1}
+[ ${#} != "1" ] && __usage && exit 1
+__run ${1}

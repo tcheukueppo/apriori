@@ -1,0 +1,65 @@
+#!/bin/bash
+# Authur : Kueppo Joseph
+# This script is part of a projet available on <link
+# it use to maintain and run java classes located in ${HOME}/.local/bin/apriori_java_classes.
+# Please report 
+
+CLASSES=(	"FAgenerate.class"
+			"FilterDataset.class"
+			"Transaction.class"
+			"Hashelement.class"
+			"Itemset.class"
+			"Apriori_and_AssociationRules.class"
+	    )
+
+DEPENDENCY_CHECK () {
+
+	# SANITY CHECK
+	THEM=${1}
+	TOKNOW=true
+	if [ ! -d $THEM ]; then
+		echo "$(basename $0) : cannot access $THEM, no such direcotory"
+		TOKNOW=false
+	fi
+	for CLASS in "${CLASSES[@]}"; do
+		if [ ! -f "${THEM}${CLASS}" ]; then
+			echo "$(basename $0) : ${THEM}${CLASS} is missing" >2
+			TOKNOW=false && break
+		fi
+	done
+	if ! which java &>/dev/null; then
+		echo "$(basename $0): java not found, please install java";
+		TOKNOW=false;
+	fi
+	[ $TOKNOW == "false" ] && exit 1
+}
+
+USAGE () {
+
+	cat <<- EOF
+		Usage : arules [OPTION] ... [/PATH/TO/THE/DATA/SET]
+		  -h, --help		displays this help message
+		The path to the data set can either be absolute or relative
+		to run program, type \`asrules /path/to/the/data/set\`.
+	EOF
+}
+
+RUN () {
+
+	local THEM="${HOME}/.local/bin/apriori_java_classes/"
+	local DATASET=${1}
+	DEPENDENCY_CHECK $THEM
+	case ${1} in
+		-h|--help) USAGE && exit 0;;
+		*)
+			if [ ! -f "$DATASET" ]; then
+				echo "$(basename $0) : cannot access $DATASET, no such file"
+				exit 1
+			fi
+			java -cp $THEM Apriori_and_AssociationRules $DATASET 
+			[ -f ./sdataset ] && rm ./sdataset ;;
+	esac
+
+}
+[ ${#} != "1" ] && USAGE >2 && exit 1
+RUN ${1}
