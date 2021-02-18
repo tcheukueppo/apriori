@@ -17,11 +17,11 @@ Open your terminal and run the following commands
 
 Fetch the project
 ```shell
-git clone "link_to_the_project"
+git clone https://github.com/kuttix/DataMiningAssociationRules.git
 ```
 Enter the directory containing the project
 ```shell
-cd /dirname
+cd DataMiningAssociationRules
 ```
 There is a *script file* named **akg** needed to perform the rest of the operations
 
@@ -65,7 +65,7 @@ From this example, the items of ```transaction-1``` are ```item_11``` and ```ite
 
 ## How to run
 
-After installation, the program is named `ar` and can be accessible at the command line 
+After installation, the program  named `asrules` can be accessible at the command line 
 provided that ```${HOME}/.local/bin``` is contained by your path variable, if not then 
 move to ```${HOME}/.local/bin``` in order to run it.
 
@@ -78,20 +78,4 @@ asrules [PATH/TO/THE/DATASET]
 ```shell
 asrules --help
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

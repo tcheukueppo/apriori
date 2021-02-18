@@ -1,6 +1,6 @@
 #!/bin/bash
 # Authur : Kueppo Joseph
-# This script is part of a projet available on <link
+# This script is part of a projet available on https://github.com/kuttix/DataMiningAssociationRules.git
 # it use to maintain and run java classes located in ${HOME}/.local/bin/apriori_java_classes.
 # Please report 
 
