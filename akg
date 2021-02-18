@@ -1,0 +1,91 @@
+#!/bin/bash
+
+pfiles=(	"FAgenerate.java"
+			"FilterDataset.java"
+			"Transaction.java"
+			"Hashelement.java" 
+			"Itemset.java" 
+			"Apriori_and_AssociationRules.java"
+			"ar"
+	   )
+
+__USAGE  () {
+
+	echo "Usage: ar [OPTION]... [DATASET]..."
+	echo -e "  ar generates frequent itemsets and association rules from a given data set\n"
+	echo -e "  -i, --install		use to build and install the program, now accessible on \$HOME/.local/bin"
+	echo "  -u, --uninstall	use this option to perform an uninstallation"
+	echo "  -r, --reinstall	use this option to perform a reinstallation"
+	echo -e "  -h, --help		to display this help message.\n"
+}
+__SANITY_CHECK () {
+
+	for i in "${pfiles[@]}"; do
+		if [ ! -f "./${i}" ]; then
+			echo "Building error : file '${i}' is missing"
+			return 1
+		fi
+	done
+	return 0
+}
+__BUILD () {
+
+	echo "Preparing to build ..."
+	__SANITY_CHECK || exit 1
+	# building java classes
+	# sanity check
+	echo "Bependency resolution ..."
+	if ! which java &>/dev/null; then
+		echo "Building error : java not installed, please install java."
+		exit 1
+	fi
+	[ ! -d ./class ] && mkdir ./class || rm -rf ./class/*
+	chmod 766 "${pfile[@]}"
+	echo -e "Generating classes ..."
+	javac *.java -d ./class && echo "ok" &&  __INSTALL 
+}
+__INSTALL () {
+
+	echo "Preparing to install ..."
+	local localbin="${HOME}/.local/"
+	{ [ ! -d $localbin ] && mkdir ${localbin} "${localbin}bin"; } || localbin="${localbin}bin"
+	[ ! -d $localbin ] && mkdir $localbin
+	localbin="${localbin}/apriori_java_classes"
+	[ ! -d $localbin ] && mkdir $localbin || rm -rf $localbin/*
+	echo "Copying classes to $localbin ..."
+	cp -v ./class/* $localbin && echo "ok\ncopying ar to $localbin"
+	cp -v ar ${localbin%/*} && echo "ok"
+	# appending ${HOME}/.local/bin to $PATH if not found
+	if ! { echo "$PATH" | grep -Eq ":?${HOME}/\.local/bin/?:?"; } then
+		echo "Please add '${HOME}/.local/bin' to your path variable or run the program in ${HOME}/.local/bin"
+	fi
+	echo "Installation finished."
+}
+__UNINSTALL () {
+
+	local localbin="${HOME}/.local/bin"
+	echo "Preparing to uninstall ..."
+	[ -f $localbin/ar ] && echo "removing $localbin/ar ..." && rm -f $localbin/ar
+	[ -d $localbin/apriori_java_classes ] && echo "removing $localbin/apriori_java_classes ..." && rm -rf $localbin/apriori_java_classes
+}
+
+__REINSTALL () {
+
+	echo "Preparing to reinstall ..."
+	__build
+}
+__RUN () {
+
+	OPTION=${1}
+	case $OPTION in
+	
+		-h|--help) __USAGE ;;
+		-i|--install) __BUILD ;;
+		-u|--uninstall) __UNINSTALL ;;
+		-r|--reinstall) __REINSTALL ;;
+		*) __USAGE >2 ;;
+	esac
+
+}
+[ ${#} != "1" ] && __USAGE && exit 1
+__RUN ${1}
