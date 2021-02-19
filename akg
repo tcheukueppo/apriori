@@ -100,7 +100,7 @@ __run () {
 		-i|--install) __build ;;
 		-u|--uninstall) __uninstall ;;
 		-r|--reinstall) __reinstall ;;
-		*) __usage >2 ;;
+		*) __usage >&2 ;;
 	esac
 
 }

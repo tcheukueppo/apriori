@@ -23,7 +23,7 @@ DEPENDENCY_CHECK () {
 	fi
 	for CLASS in "${CLASSES[@]}"; do
 		if [ ! -f "${THEM}${CLASS}" ]; then
-			echo "$(basename $0) : ${THEM}${CLASS} is missing" >2
+			echo "$(basename $0) : ${THEM}${CLASS} is missing" >&2
 			TOKNOW=false && break
 		fi
 	done
@@ -61,5 +61,5 @@ RUN () {
 	esac
 
 }
-[ ${#} != "1" ] && USAGE >2 && exit 1
+[ ${#} != "1" ] && USAGE >&2 && exit 1
 RUN ${1}
