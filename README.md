@@ -16,25 +16,25 @@ Open your terminal and run the following commands
 ## GETTING THE PROJECT
 
 Fetch the project
-```shell
-git clone https://github.com/kuttix/DataMiningAssociationRules.git
+```bash
+git clone 'https://github.com/tcheukueppo/apriori.git'
 ```
 Enter the directory containing the project
-```shell
-cd DataMiningAssociationRules
+```bash
+cd apriori
 ```
 There is a *script file* named **akg** needed to perform the rest of the operations
 
 ## Installation
-```shell
+```bash
 ./akg --install
 ```
 ## Uninstallation
-```shell
+```bash
 ./akg --uninstall
 ```
 ## Reinstallation
-```shell
+```bash
 ./akg --reinstall
 ```
 
